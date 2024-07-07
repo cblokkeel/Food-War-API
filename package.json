@@ -4,7 +4,13 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
-    "hono": "^4.4.12"
+    "@hono/zod-validator": "^0.2.2",
+    "hono": "^4.4.12",
+    "ioredis": "^5.4.1",
+    "mongoose": "^8.4.5",
+    "redis": "^4.6.15",
+    "rust-result-enum-ts": "^1.0.2",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bun": "latest"

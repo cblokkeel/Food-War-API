@@ -1,9 +1,20 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { connectToMongo } from "./core/mongo";
+import Restaurants from "./restaurant/router";
 
-const app = new Hono()
+connectToMongo("mongodb://localhost:27017/mydb");
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+const app = new Hono();
+app.use(
+    "*",
+    cors({
+        origin: "*",
+        allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    }),
+);
 
-export default app
+app.get("/", (c) => c.text("Welcome to the API!"));
+app.route("/rest", Restaurants);
+
+export default app;
