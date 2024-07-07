@@ -3,7 +3,12 @@ import {
     createRestaurantBodyValidator,
     createRestaurantCustomValidator,
 } from "./validator";
-import { createRestaurant, getRestaurant, getRestaurants } from "./service";
+import {
+    createRestaurant,
+    deleteRestaurant,
+    getRestaurant,
+    getRestaurants,
+} from "./service";
 import {
     cacheAllRestaurants,
     cacheRestaurant,
@@ -70,9 +75,9 @@ router.post(
     createRestaurantBodyValidator,
     createRestaurantCustomValidator,
     async (c) => {
-        const newRestaurant = c.req.valid("json");
+        const { body } = c.req.valid("json");
 
-        const result = await createRestaurant(newRestaurant);
+        const result = await createRestaurant(body);
         if (result.isErr()) {
             return c.text("failed to create restaurant", 500);
         }
@@ -80,8 +85,13 @@ router.post(
     },
 );
 
-router.delete("/:id", (c) => {
-    return c.text("qds");
+router.delete("/:id", async (c) => {
+    const restaurantID = c.req.param("id");
+    const result = await deleteRestaurant(restaurantID);
+    if (result.isErr()) {
+        return c.text("failed to delete restaurant", 500);
+    }
+    return c.text("ok");
 });
 
 export default router;

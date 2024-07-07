@@ -22,7 +22,15 @@ export function addToSortedSet(name: string, score: number, val: string) {
     return redis.zadd(name, score, val);
 }
 
-export function getSortedSet(name: string, start: number, stop: number) {
+export function getSortedSet(
+    name: string,
+    start: number,
+    stop: number,
+    reverse?: boolean,
+) {
+    if (reverse) {
+        return redis.zrevrange(name, start, stop);
+    }
     return redis.zrange(name, start, stop);
 }
 

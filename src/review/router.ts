@@ -12,9 +12,9 @@ router.post(
     createReviewBodyValidator,
     createReviewCustomValidator,
     async (c) => {
-        const newReview = c.req.valid("json");
+        const { body } = c.req.valid("json");
 
-        const res = await createReview(newReview);
+        const res = await createReview(body);
         if (res.isErr()) {
             return c.text("error", 500);
         }

@@ -1,4 +1,4 @@
-import { addToSortedSet } from "../core/redis";
+import { addToSortedSet, removeFromSortedSet } from "../core/redis";
 import { invalidateAllRestaurantsCache } from "./cache";
 import { RestaurantModel } from "./model";
 import { CreateRestaurantReq, Restaurant } from "./types";
@@ -73,7 +73,9 @@ export async function deleteRestaurant(
 ): Promise<Result<boolean, "error">> {
     try {
         await RestaurantModel.findByIdAndDelete(id);
+        await removeFromSortedSet(leaderboardKey, id);
     } catch (err) {
+        // TODO: handle not found
         return new Err("error");
     }
 
