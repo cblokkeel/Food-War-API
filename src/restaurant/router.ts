@@ -70,7 +70,7 @@ router.post(
     createRestaurantBodyValidator,
     createRestaurantCustomValidator,
     async (c) => {
-        const { body: newRestaurant } = c.req.valid("json");
+        const newRestaurant = c.req.valid("json");
 
         const result = await createRestaurant(newRestaurant);
         if (result.isErr()) {

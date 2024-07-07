@@ -1,7 +1,7 @@
 import { zValidator } from "@hono/zod-validator";
 import { validator } from "hono/validator";
 import { z } from "zod";
-import { alreadyExists } from "./service";
+import { restaurantAlreadyExists } from "./service";
 
 export const createRestaurantCustomValidator = validator(
     "json",
@@ -9,7 +9,7 @@ export const createRestaurantCustomValidator = validator(
         if (!body || !body.name) {
             return c.text("missing name", 400);
         }
-        const exists = await alreadyExists(body.name);
+        const exists = await restaurantAlreadyExists(body.name);
         if (exists) {
             return c.text("name must be unique", 409);
         }

@@ -1,7 +1,7 @@
-import { redis } from "../core/redis";
+import { delFromCache, getFromCache, setInCache } from "../core/redis";
 import { Restaurant } from "./types";
 
-const TTL = Bun.env.RESTAURANT_CACHE_TTL || 60 * 60 * 6;
+const TTL = Number(Bun.env.RESTAURANT_CACHE_TTL) || 60 * 60 * 6;
 
 function getRestaurantCacheKey(id: string): string {
     return `restaurant:${id}:cache`;
@@ -14,7 +14,7 @@ function getAllRestaurantsCacheKey(): string {
 export async function getRestaurantFromCache(
     id: string,
 ): Promise<Omit<Restaurant, "id"> | null> {
-    const cached = await redis.get(getRestaurantCacheKey(id));
+    const cached = await getFromCache(getRestaurantCacheKey(id));
     if (cached) {
         return JSON.parse(cached);
     }
@@ -25,10 +25,9 @@ export async function cacheRestaurant(
     id: string,
     restaurant: Omit<Restaurant, "id">,
 ) {
-    await redis.set(
+    await setInCache(
         getRestaurantCacheKey(id),
         JSON.stringify(restaurant),
-        "EX",
         TTL,
     );
 }
@@ -36,7 +35,7 @@ export async function cacheRestaurant(
 export async function getAllRestaurantsFromCache(): Promise<
     Restaurant[] | null
 > {
-    const cached = await redis.get(getAllRestaurantsCacheKey());
+    const cached = await getFromCache(getAllRestaurantsCacheKey());
     if (cached) {
         return JSON.parse(cached);
     }
@@ -44,10 +43,13 @@ export async function getAllRestaurantsFromCache(): Promise<
 }
 
 export async function cacheAllRestaurants(restaurants: Restaurant[]) {
-    await redis.set(
+    await setInCache(
         getAllRestaurantsCacheKey(),
         JSON.stringify(restaurants),
-        "EX",
         TTL,
     );
+}
+
+export async function invalidateAllRestaurantsCache() {
+    await delFromCache(getAllRestaurantsCacheKey());
 }

@@ -1,8 +1,12 @@
+import { addToSortedSet } from "../core/redis";
+import { invalidateAllRestaurantsCache } from "./cache";
 import { RestaurantModel } from "./model";
 import { CreateRestaurantReq, Restaurant } from "./types";
 import { Result, Ok, Err } from "rust-result-enum-ts";
 
-export async function alreadyExists(name: string): Promise<boolean> {
+const leaderboardKey = Bun.env.REVIEW_LEADERBOARD_KEY as string;
+
+export async function restaurantAlreadyExists(name: string): Promise<boolean> {
     const result = await RestaurantModel.findOne({ name });
     return result !== null;
 }
@@ -59,6 +63,8 @@ export async function createRestaurant(
         return new Err("error");
     }
 
+    await invalidateAllRestaurantsCache();
+    await addToSortedSet(leaderboardKey, 0, newRestaurant.id);
     return new Ok(newRestaurant.id);
 }
 
@@ -71,5 +77,6 @@ export async function deleteRestaurant(
         return new Err("error");
     }
 
+    await invalidateAllRestaurantsCache();
     return new Ok(true);
 }

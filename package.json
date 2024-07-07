@@ -4,10 +4,12 @@
     "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.24.3",
     "@hono/zod-validator": "^0.2.2",
     "hono": "^4.4.12",
     "ioredis": "^5.4.1",
     "mongoose": "^8.4.5",
+    "openai": "^4.52.3",
     "redis": "^4.6.15",
     "rust-result-enum-ts": "^1.0.2",
     "zod": "^3.23.8"
